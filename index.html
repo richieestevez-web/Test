@@ -3,83 +3,327 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>¿Quieres salir conmigo?</title>
+  <title>Una invitación especial</title>
   <style>
+    :root {
+      --bg-color: #fdfbf7;
+      --card-bg: #ffffff;
+      --primary-text: #2c3e50;
+      --accent: #e88d9a; /* Un rosa desaturado y elegante */
+      --btn-yes: #79b791; /* Verde suave */
+      --btn-no: #d96c75; /* Rojo suave */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--primary-text);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #ffe6e9;
-      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .header-text {
       text-align: center;
+      margin-bottom: 40px;
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--accent);
+      letter-spacing: 1px;
     }
-    h1 {
-      color: #d63384;
-      font-size: 2.5rem;
-      margin-bottom: 30px;
-    }
-    .buttons {
+
+    .cards-container {
       display: flex;
-      gap: 20px;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      max-width: 1000px;
+    }
+
+    /* Estructura de la tarjeta 3D */
+    .card-scene {
+      width: 300px;
+      height: 400px;
+      perspective: 1000px; /* Le da la profundidad 3D */
+      cursor: pointer;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    /* Clase que controla el giro */
+    .card.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card__face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden; /* Oculta la cara trasera cuando está volteada */
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      text-align: center;
+      background-color: var(--card-bg);
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .card__face--front {
+      background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+    }
+
+    /* Decoración sutil en el frente */
+    .card__face--front::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      border: 1px dashed var(--accent);
+      border-radius: 8px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .card__face--back {
+      transform: rotateY(180deg);
+      background-color: #faf8f5;
+    }
+
+    .icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      opacity: 0.8;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--primary-text);
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+      color: #555;
+    }
+
+    /* Estilos para la tarjeta final (La Pregunta) */
+    .final-question {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--accent);
+      margin-bottom: 25px;
+    }
+
+    .buttons-container {
+      display: flex;
+      gap: 15px;
       align-items: center;
       justify-content: center;
       position: relative;
+      width: 100%;
+      min-height: 80px; /* Espacio para que el botón crezca sin romper el layout */
     }
-    button {
-      padding: 12px 24px;
-      font-size: 1.2rem;
+
+    .action-btn {
+      padding: 10px 20px;
+      font-size: 1.1rem;
       font-weight: bold;
       border: none;
-      border-radius: 8px;
+      border-radius: 25px;
       cursor: pointer;
       transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
+
     #btnYes {
-      background-color: #28a745;
+      background-color: var(--btn-yes);
       color: white;
     }
+
+    #btnYes:hover {
+      background-color: #639d79;
+    }
+
     #btnNo {
-      background-color: #dc3545;
+      background-color: var(--btn-no);
       color: white;
+    }
+
+    #success-message {
+      display: none;
+      font-size: 1.6rem;
+      color: var(--accent);
+      font-weight: bold;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .tap-hint {
+      font-size: 0.8rem;
+      color: #999;
+      position: absolute;
+      bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .card-scene {
+        width: 280px;
+        height: 380px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <h1 id="question"> Hola Mau ¿Quieres salir conmigo?</h1>
-  <div class="buttons">
-    <button id="btnYes">¡SÍ!</button>
-    <button id="btnNo">No</button>
+  <h1 class="header-text">Toca las tarjetas en orden...</h1>
+
+  <div class="cards-container">
+    
+    <!-- Tarjeta 1 -->
+    <div class="card-scene" onclick="flipCard(this)">
+      <div class="card">
+        <div class="card__face card__face--front">
+          <div class="icon">💌</div>
+          <h2>Paso 1</h2>
+          <p>¿Por qué recibiste este enlace?</p>
+          <span class="tap-hint">Toca para girar</span>
+        </div>
+        <div class="card__face card__face--back">
+          <div class="icon">✨</div>
+          <p>Porque alguien se animó a preparar una pequeña sorpresa...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta 2 -->
+    <div class="card-scene" onclick="flipCard(this)">
+      <div class="card">
+        <div class="card__face card__face--front">
+          <div class="icon">☕</div>
+          <h2>Paso 2</h2>
+          <p>Las condiciones</p>
+          <span class="tap-hint">Toca para girar</span>
+        </div>
+        <div class="card__face card__face--back">
+          <div class="icon">🍷</div>
+          <p>Buena conversación, algo rico para comer/tomar y absolutamente cero presión.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta 3 -->
+    <div class="card-scene" id="finalCard">
+      <div class="card">
+        <div class="card__face card__face--front" onclick="flipFinalCard()">
+          <div class="icon">❓</div>
+          <h2>Paso 3</h2>
+          <p>La gran pregunta...</p>
+          <span class="tap-hint">Toca para descubrir</span>
+        </div>
+        <div class="card__face card__face--back">
+          
+          <div id="question-content">
+            <div class="final-question"> Hola Mau ¿Quieres salir conmigo?</div>
+            <div class="buttons-container" id="buttonsDiv">
+              <button class="action-btn" id="btnYes">¡SÍ!</button>
+              <button class="action-btn" id="btnNo">No</button>
+            </div>
+          </div>
+          
+          <div id="success-message">
+            ¡Perfecto! <br> Ahora toma una captura y enviamela para saber tu respuesta ❤️❤️
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
+    // Lógica para girar las tarjetas normales
+    function flipCard(sceneElement) {
+      const card = sceneElement.querySelector('.card');
+      card.classList.toggle('is-flipped');
+    }
+
+    // Lógica para girar la última tarjeta (solo se gira al tocar el frente)
+    function flipFinalCard() {
+      const finalCard = document.querySelector('#finalCard .card');
+      if (!finalCard.classList.contains('is-flipped')) {
+        finalCard.classList.add('is-flipped');
+      }
+    }
+
+    // Lógica del botón saltarín
     const btnYes = document.getElementById('btnYes');
     const btnNo = document.getElementById('btnNo');
-    const question = document.getElementById('question');
+    const buttonsDiv = document.getElementById('buttonsDiv');
+    const questionContent = document.getElementById('question-content');
+    const successMessage = document.getElementById('success-message');
 
-    let yesSize = 1.2;
-    let noSize = 1.2;
+    let yesSize = 1.1; // Rem base
+    let noSize = 1.1;
 
-    btnNo.addEventListener('click', () => {
+    // Al hacer clic en NO
+    btnNo.addEventListener('click', (e) => {
+      // Evitar que el clic en el botón gire la tarjeta de vuelta
+      e.stopPropagation(); 
+
       // Crecer el botón SÍ
-      yesSize += 0.4;
+      yesSize += 0.3;
       btnYes.style.fontSize = `${yesSize}rem`;
-      btnYes.style.padding = `${12 * (yesSize / 1.2)}px ${24 * (yesSize / 1.2)}px`;
+      btnYes.style.padding = `${10 * (yesSize/1.1)}px ${20 * (yesSize/1.1)}px`;
 
       // Reducir el botón NO
       if (noSize > 0.4) {
         noSize -= 0.15;
         btnNo.style.fontSize = `${noSize}rem`;
-        btnNo.style.padding = `${12 * (noSize / 1.2)}px ${24 * (noSize / 1.2)}px`;
+        btnNo.style.padding = `${10 * (noSize/1.1)}px ${20 * (noSize/1.1)}px`;
+      }
+      
+      // Si el botón NO se hace muy pequeño, lo desaparecemos
+      if(noSize <= 0.4) {
+          btnNo.style.display = 'none';
       }
     });
 
-    btnYes.addEventListener('click', () => {
-      question.textContent = "¡Perfecto! ahora toma una captura y enviamela para saber que dijiste que si ❤️❤️";
-      document.querySelector('.buttons').style.display = 'none';
+    // Al hacer clic en SÍ
+    btnYes.addEventListener('click', (e) => {
+      e.stopPropagation();
+      questionContent.style.display = 'none';
+      successMessage.style.display = 'block';
     });
   </script>
 
