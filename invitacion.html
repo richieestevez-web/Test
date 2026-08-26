@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Quieres salir conmigo?</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #ffe6e9;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    h1 {
+      color: #d63384;
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+    }
+    .buttons {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    #btnYes {
+      background-color: #28a745;
+      color: white;
+    }
+    #btnNo {
+      background-color: #dc3545;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 id="question">¿Quieres salir conmigo?</h1>
+  <div class="buttons">
+    <button id="btnYes">¡SÍ!</button>
+    <button id="btnNo">No</button>
+  </div>
+
+  <script>
+    const btnYes = document.getElementById('btnYes');
+    const btnNo = document.getElementById('btnNo');
+    const question = document.getElementById('question');
+
+    let yesSize = 1.2;
+    let noSize = 1.2;
+
+    btnNo.addEventListener('click', () => {
+      // Crecer el botón SÍ
+      yesSize += 0.4;
+      btnYes.style.fontSize = `${yesSize}rem`;
+      btnYes.style.padding = `${12 * (yesSize / 1.2)}px ${24 * (yesSize / 1.2)}px`;
+
+      // Reducir el botón NO
+      if (noSize > 0.4) {
+        noSize -= 0.15;
+        btnNo.style.fontSize = `${noSize}rem`;
+        btnNo.style.padding = `${12 * (noSize / 1.2)}px ${24 * (noSize / 1.2)}px`;
+      }
+    });
+
+    btnYes.addEventListener('click', () => {
+      question.textContent = "¡Sabía que dirías que sí! ❤️";
+      document.querySelector('.buttons').style.display = 'none';
+    });
+  </script>
+
+</body>
+</html>
